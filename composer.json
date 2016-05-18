@@ -1,0 +1,22 @@
+{
+    "name": "esemve/hook",
+    "description": "Simple hook engine for Laravel 5.*",
+    "type": "library",
+    "keywords": ["Hook","Laravel"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bence Kádár",
+            "email": "esemve@gmail.com",
+			"role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+    "autoload": {
+		"psr-4": {
+			"Esemve\\Hook\\": "src/"
+			}
+		}
+	}
+}
