@@ -152,6 +152,10 @@ class Hook
     protected function run($hook, $params, Callback $callback)
     {
         $output = null;
+        array_unshift($params, $output);
+        array_unshift($params, $callback);
+
+        $params[1] = '';
 
         if (array_key_exists($hook, $this->watch)) {
             if (is_array($this->watch[$hook])) {
@@ -161,10 +165,8 @@ class Hook
                         break;
                     }
 
-                    array_unshift($params, $output);
-                    array_unshift($params, $callback);
-
                     $output = call_user_func_array($function['function'], $params);
+                    $params[1] = $output;
                 }
             }
         }
