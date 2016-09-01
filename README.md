@@ -1,2 +1,119 @@
-# Hook
-Simple Hook engine for Laravel
+# Hook engine for Laravel
+
+**What is this?**
+The purpose of this project is that your packages could modify each other without overriding the source code.
+
+**What is a Hook?**
+
+It is similar to an event. A code bounded by a hook runs unless a hook listener catches it and orders that instead of the function in the hook, something else should run. They could be set in an established order, so you are able to make several modifications in the code.
+
+**What is it good for?**
+
+Example 1: You have a module which displays an editor. This remains the same editor in every case.
+If you bound the display of the editor in a hook, then you can write a module which can redefine/override this hook, and for example changs the textarea to a ckeditor. 
+
+Example 2: You list the users. You can include every line's print in a hook. This way you can write a separate module which could extend this line with an e-mail address print. 
+
+Example 3: You save the users' data in a database. If you do it in a hook, you can write a module which could add extra fields to the user model like "first name" or "last name". To do that, you didn't need to modify the code that handles the users, the extension module doesn't need to know the functioning of the main module. 
+
+
+... and so many other things. If you are building a CMS-like system, it will make your life a lot easier.
+
+# How do I install it?
+
+```bash
+composer require esemve/hook
+```
+
+then to the app.php :
+```php
+...
+'providers' => [ 
+    ...
+    Esemve\Hook\HookServiceProvider::class,
+    ...
+ ],
+ 'aliases' =>[
+    ...
+    'Hook' => Esemve\Hook\Facades\Hook::class
+    ...
+ ]
+```
+
+
+# How does it work?
+
+Example:
+
+```php
+    $user = new User();
+    $user = Hook::get('fillUser',[$user],function($user)
+    {
+     return $user;
+    });
+```
+
+In this case a fillUser hook is thrown, which receive the $user object as a parameter. If nothing catches it, the internal function, the return $user will run, so nothing happens. But it can be caught by a listener from a provider:
+
+```php
+        Hook::listen('fillUser', function ($callback, $output, $user) {
+            if (empty($output))
+            {
+              $output = $user;
+            }
+            $output->profilImage = ProfilImage::getForUser($user->id);
+            return $output;
+        }, 10);
+
+```
+The $callback contains the hook's original internal function, so it can be called here.
+
+Multiple listeners could be registered to a hook, so in the $output the listener receives the response of the previously registered listeners of the hook.
+
+THen come the parameters delivered by the hook, in this case the user.
+
+The hook listener above caught the call of the fillUser, extended the received object, and returned it to its original place. After the run of the hook the $user object contains a profilImage variable as well.
+
+Number 10 in the example is the priority. They are executed in an order, so if a number 5 is registered to the fillUser as well, it will run before number 10.
+
+
+
+# Usage in blade templates
+
+```php
+@hook('hookName')
+```
+
+In this case the hook listener can catch it like this:
+```php
+ Hook::listen('hookName', function ($callback, $output, $variables) {
+   return view('test.button');
+ });
+```
+In the $variables variable it receives all of the variables that are available for the blade template.
+
+
+# Stop
+```php
+Hook::stop();
+```
+Put in a hook listener it stops the running of the other listeners that are registered to this hook. 
+
+# For testing
+
+```php
+Hook::mock('hookName','returnValue');
+```
+After that the hookName hook will return returnValue as a response.
+
+# Artisan
+
+```bash
+php artisan hook::list
+```
+
+Lists all the active hook listeners.
+
+---
+
+License: MIT

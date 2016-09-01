@@ -10,7 +10,7 @@ class Hook
     protected $testing = false;
 
     /**
-     * Visszaadja egy hook által válaszolt értéket
+     * Return the hook answer
      * @param string $hook Hook name
      * @param array $params
      * @param callable $callback
@@ -36,7 +36,7 @@ class Hook
     }
 
     /**
-     * Megszakítja az összes további erre a hookra feliratkozott event futását
+     * Stop all another hook running
      * @param string $hook Hook name
      */
     public function stop($hook)
@@ -45,14 +45,14 @@ class Hook
     }
 
     /**
-     * Hookra feliratkozás
+     * Subscribe to hook
      * @param string $hook Hook name
      * @param $priority
      * @param $function
      */
     public function listen($hook, $function, $priority = null)
     {
-        $caller = debug_backtrace()[0];
+        $caller = debug_backtrace()[2];
 
         if (empty($this->watch[$hook])) {
             $this->watch[$hook] = [];
@@ -65,8 +65,8 @@ class Hook
         $this->watch[$hook][$priority] = [
             'function' => $function,
             'caller' => [
-                'file' => $caller['file'],
-                'line' => $caller['line'],
+                //'file' => $caller['file'],
+                //'line' => $caller['line'],
                 'class' => $caller['class']
             ]
         ];
@@ -75,7 +75,7 @@ class Hook
     }
 
     /**
-     * Visszaadja, hogy milyen hookok vannak regisztrálva
+     * Return all registered hooks
      * @return array
      */
     public function getHooks()
@@ -86,7 +86,7 @@ class Hook
     }
 
     /**
-     * Visszaadja, hogy milyen hookok esetén mi van benne hívásfában
+     * Return all listeners for hook
      * @param string $hook
      * @return array
      */
@@ -102,10 +102,9 @@ class Hook
     }
 
     /**
-     * Teszteléshez használható. A megadott nevű mock a második paraméterben megadott
-     * értéket fogja válaszolni.
+     * For testing
      * @param string $name Hook name
-     * @param mixed $return Válasz
+     * @param mixed $return Answer
      */
     public function mock($name, $return)
     {
@@ -114,9 +113,8 @@ class Hook
     }
 
     /**
-     * Visszaadja a hook által beállított értéket abban az esetben, ha teszt üzemmódban
-     * vagyunk és van beállított hook
-     * @param string $hook Hook név
+     * Return the mock value
+     * @param string $hook Hook name
      * @return null|mixed
      */
     protected function returnMockIfDebugModeAndMockExists($hook)
@@ -172,5 +170,14 @@ class Hook
         }
 
         return $output;
+    }
+
+    /**
+     * Return the listeners
+     * @return array
+     */
+    public function getListeners()
+    {
+        return $this->watch;
     }
 }
