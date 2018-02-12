@@ -1,6 +1,7 @@
 # Hook engine for Laravel
 
 **What is this?**
+
 The purpose of this project is that your packages could modify each other without overriding the source code.
 
 **What is a Hook?**
@@ -91,6 +92,8 @@ In this case the hook listener can catch it like this:
  });
 ```
 In the $variables variable it receives all of the variables that are available for the blade template.
+
+**To listen blade templates you need to listen template.hookName instead of just hookName!**
 
 
 # Stop
