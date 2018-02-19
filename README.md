@@ -87,7 +87,7 @@ Number 10 in the example is the priority. They are executed in an order, so if a
 
 In this case the hook listener can catch it like this:
 ```php
- Hook::listen('hookName', function ($callback, $output, $variables) {
+ Hook::listen('template.hookName', function ($callback, $output, $variables) {
    return view('test.button');
  });
 ```
