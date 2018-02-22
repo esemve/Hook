@@ -11,11 +11,11 @@ It is similar to an event. A code bounded by a hook runs unless a hook listener 
 **What is it good for?**
 
 Example 1: You have a module which displays an editor. This remains the same editor in every case.
-If you bound the display of the editor in a hook, then you can write a module which can redefine/override this hook, and for example changs the textarea to a ckeditor. 
+If you bound the display of the editor in a hook, then you can write a module which can redefine/override this hook, and for example changs the textarea to a ckeditor.
 
-Example 2: You list the users. You can include every line's print in a hook. This way you can write a separate module which could extend this line with an e-mail address print. 
+Example 2: You list the users. You can include every line's print in a hook. This way you can write a separate module which could extend this line with an e-mail address print.
 
-Example 3: You save the users' data in a database. If you do it in a hook, you can write a module which could add extra fields to the user model like "first name" or "last name". To do that, you didn't need to modify the code that handles the users, the extension module doesn't need to know the functioning of the main module. 
+Example 3: You save the users' data in a database. If you do it in a hook, you can write a module which could add extra fields to the user model like "first name" or "last name". To do that, you didn't need to modify the code that handles the users, the extension module doesn't need to know the functioning of the main module.
 
 
 ... and so many other things. If you are building a CMS-like system, it will make your life a lot easier.
@@ -29,7 +29,7 @@ composer require esemve/hook
 then to the app.php :
 ```php
 ...
-'providers' => [ 
+'providers' => [
     ...
     Esemve\Hook\HookServiceProvider::class,
     ...
@@ -100,7 +100,22 @@ In the $variables variable it receives all of the variables that are available f
 ```php
 Hook::stop();
 ```
-Put in a hook listener it stops the running of the other listeners that are registered to this hook. 
+Put in a hook listener it stops the running of the other listeners that are registered to this hook.
+
+
+# Wrap html
+```php
+@hook('hookName', true)
+    this content can be modified with dom parsers
+    you can inject some html here
+@endhook
+```
+Now the `$output` parameter contains html wrapped by hook component.
+```php
+Hook::listen('template.hookName', function ($callback, $output, $variables) {
+  return "<div class=\"alert alert-success\">$output</div>";
+});
+```
 
 # For testing
 
