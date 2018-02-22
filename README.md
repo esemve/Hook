@@ -84,8 +84,8 @@ You can pass initial output to the listeners too.
 ```php
 $initialOutput='test string';
 
-\Hook::get('testing',['other string'],function($user){
-    return $user;
+\Hook::get('testing',['other string'],function($otherString){
+    return $otherString;
 },$initialOutput)
 
 // and later ...
@@ -100,7 +100,7 @@ Hook::listen('testing', function ($callback, $output, $otherString) {
     return $output; // 'test string yeeeaaaayyy!'
 });
 ```
-
+If there is no listeners, 'other string' will be returned.
 
 # Usage in blade templates
 
