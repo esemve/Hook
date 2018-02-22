@@ -47,24 +47,23 @@ then to the app.php :
 Example:
 
 ```php
-    $user = new User();
-    $user = Hook::get('fillUser',[$user],function($user)
-    {
-     return $user;
-    });
+$user = new User();
+$user = Hook::get('fillUser',[$user],function($user){
+    return $user;
+});
 ```
 
 In this case a fillUser hook is thrown, which receive the $user object as a parameter. If nothing catches it, the internal function, the return $user will run, so nothing happens. But it can be caught by a listener from a provider:
 
 ```php
-        Hook::listen('fillUser', function ($callback, $output, $user) {
-            if (empty($output))
-            {
-              $output = $user;
-            }
-            $output->profilImage = ProfilImage::getForUser($user->id);
-            return $output;
-        }, 10);
+Hook::listen('fillUser', function ($callback, $output, $user) {
+    if (empty($output))
+    {
+      $output = $user;
+    }
+    $output->profilImage = ProfilImage::getForUser($user->id);
+    return $output;
+}, 10);
 
 ```
 The $callback contains the hook's original internal function, so it can be called here.
@@ -77,6 +76,30 @@ The hook listener above caught the call of the fillUser, extended the received o
 
 Number 10 in the example is the priority. They are executed in an order, so if a number 5 is registered to the fillUser as well, it will run before number 10.
 
+
+# Initial output
+
+You can pass initial output to the listeners too.
+
+```php
+$initialOutput='test string';
+
+\Hook::get('testing',['other string'],function($user){
+    return $user;
+},$initialOutput)
+
+// and later ...
+
+Hook::listen('testing', function ($callback, $output, $otherString) {
+    if ($output==='test string') {
+        $output="{$output} yeeeaaaayyy!";
+    }
+    if ($otherString==='other_string') {
+        // other string is good too
+    }
+    return $output; // 'test string yeeeaaaayyy!'
+});
+```
 
 
 # Usage in blade templates
@@ -93,15 +116,7 @@ In this case the hook listener can catch it like this:
 ```
 In the $variables variable it receives all of the variables that are available for the blade template.
 
-**To listen blade templates you need to listen template.hookName instead of just hookName!**
-
-
-# Stop
-```php
-Hook::stop();
-```
-Put in a hook listener it stops the running of the other listeners that are registered to this hook.
-
+:exclamation: **To listen blade templates you need to listen `template.hookName` instead of just `hookName`!**
 
 # Wrap HTML
 ```php
@@ -116,6 +131,15 @@ Hook::listen('template.hookName', function ($callback, $output, $variables) {
   return "<div class=\"alert alert-success\">$output</div>";
 });
 ```
+
+
+# Stop
+```php
+Hook::stop();
+```
+Put in a hook listener it stops the running of the other listeners that are registered to this hook.
+
+
 
 # For testing
 
