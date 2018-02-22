@@ -14,6 +14,7 @@ class Hook
      * @param string $hook Hook name
      * @param array $params
      * @param callable $callback
+     * @param string $htmlContent content wrapped by hook
      * @return null|void
      */
     public function get($hook, $params = [], callable $callback = null, $htmlContent = '')
@@ -145,6 +146,7 @@ class Hook
      * @param string $hook Hook name
      * @param array $params Parameters
      * @param \Esemve\Hook\Callback $callback Callback object
+     * @param string $output html wrapped by hook
      * @return mixed
      */
     protected function run($hook, $params, Callback $callback, $output = null)
@@ -159,9 +161,7 @@ class Hook
                         unset($this->stop[$hook]);
                         break;
                     }
-                    if($output){
-                        //var_dump($params);
-                    }
+
                     $output = call_user_func_array($function['function'], $params);
                     $params[1] = $output;
                 }

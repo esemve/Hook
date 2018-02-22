@@ -103,7 +103,7 @@ Hook::stop();
 Put in a hook listener it stops the running of the other listeners that are registered to this hook.
 
 
-# Wrap html
+# Wrap HTML
 ```php
 @hook('hookName', true)
     this content can be modified with dom parsers
