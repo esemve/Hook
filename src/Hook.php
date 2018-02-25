@@ -10,11 +10,13 @@ class Hook
     protected $testing = false;
 
     /**
-     * Return the hook answer
-     * @param string $hook Hook name
-     * @param array $params
+     * Return the hook answer.
+     *
+     * @param string   $hook        Hook name
+     * @param array    $params
      * @param callable $callback
-     * @param string $htmlContent content wrapped by hook
+     * @param string   $htmlContent content wrapped by hook
+     *
      * @return null|void
      */
     public function get($hook, $params = [], callable $callback = null, $htmlContent = '')
@@ -33,11 +35,13 @@ class Hook
         }
 
         unset($callbackObject);
+
         return $output;
     }
 
     /**
-     * Stop all another hook running
+     * Stop all another hook running.
+     *
      * @param string $hook Hook name
      */
     public function stop($hook)
@@ -46,7 +50,8 @@ class Hook
     }
 
     /**
-     * Subscribe to hook
+     * Subscribe to hook.
+     *
      * @param string $hook Hook name
      * @param $priority
      * @param $function
@@ -65,30 +70,34 @@ class Hook
 
         $this->watch[$hook][$priority] = [
             'function' => $function,
-            'caller' => [
+            'caller'   => [
                 //'file' => $caller['file'],
                 //'line' => $caller['line'],
-                'class' => $caller['class']
-            ]
+                'class' => $caller['class'],
+            ],
         ];
 
         ksort($this->watch[$hook]);
     }
 
     /**
-     * Return all registered hooks
+     * Return all registered hooks.
+     *
      * @return array
      */
     public function getHooks()
     {
         $hookNames = (array_keys($this->watch));
         ksort($hookNames);
+
         return $hookNames;
     }
 
     /**
-     * Return all listeners for hook
+     * Return all listeners for hook.
+     *
      * @param string $hook
+     *
      * @return array
      */
     public function getEvents($hook)
@@ -103,9 +112,10 @@ class Hook
     }
 
     /**
-     * For testing
-     * @param string $name Hook name
-     * @param mixed $return Answer
+     * For testing.
+     *
+     * @param string $name   Hook name
+     * @param mixed  $return Answer
      */
     public function mock($name, $return)
     {
@@ -114,8 +124,10 @@ class Hook
     }
 
     /**
-     * Return the mock value
+     * Return the mock value.
+     *
      * @param string $hook Hook name
+     *
      * @return null|mixed
      */
     protected function returnMockIfDebugModeAndMockExists($hook)
@@ -124,16 +136,18 @@ class Hook
             if (array_key_exists($hook, $this->mock)) {
                 $output = $this->mock[$hook]['return'];
                 unset($this->mock[$hook]);
+
                 return $output;
             }
         }
-        return null;
     }
 
     /**
-     * Return a new callback object
+     * Return a new callback object.
+     *
      * @param callable $callback function
-     * @param array $params parameters
+     * @param array    $params   parameters
+     *
      * @return \Esemve\Hook\Callback
      */
     protected function createCallbackObject($callback, $params)
@@ -142,11 +156,13 @@ class Hook
     }
 
     /**
-     * Run hook events
-     * @param string $hook Hook name
-     * @param array $params Parameters
+     * Run hook events.
+     *
+     * @param string                $hook     Hook name
+     * @param array                 $params   Parameters
      * @param \Esemve\Hook\Callback $callback Callback object
-     * @param string $output html wrapped by hook
+     * @param string                $output   html wrapped by hook
+     *
      * @return mixed
      */
     protected function run($hook, $params, Callback $callback, $output = null)
@@ -172,7 +188,8 @@ class Hook
     }
 
     /**
-     * Return the listeners
+     * Return the listeners.
+     *
      * @return array
      */
     public function getListeners()
