@@ -7,7 +7,6 @@ class Callback
     protected $function;
     protected $parameters = [];
     protected $run = true;
-    protected $output = null;
 
     public function __construct($function, $parameters = [])
     {

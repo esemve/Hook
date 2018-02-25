@@ -14,9 +14,10 @@ class Hook
      * @param string $hook Hook name
      * @param array $params
      * @param callable $callback
+     * @param string $htmlContent content wrapped by hook
      * @return null|void
      */
-    public function get($hook, $params = [], callable $callback = null)
+    public function get($hook, $params = [], callable $callback = null, $htmlContent = '')
     {
         $callbackObject = $this->createCallbackObject($callback, $params);
 
@@ -25,7 +26,7 @@ class Hook
             return $output;
         }
 
-        $output = $this->run($hook, $params, $callbackObject);
+        $output = $this->run($hook, $params, $callbackObject, $htmlContent);
 
         if (!$output) {
             $output = $callbackObject->call();
@@ -145,15 +146,13 @@ class Hook
      * @param string $hook Hook name
      * @param array $params Parameters
      * @param \Esemve\Hook\Callback $callback Callback object
+     * @param string $output html wrapped by hook
      * @return mixed
      */
-    protected function run($hook, $params, Callback $callback)
+    protected function run($hook, $params, Callback $callback, $output = null)
     {
-        $output = null;
         array_unshift($params, $output);
         array_unshift($params, $callback);
-
-        $params[1] = '';
 
         if (array_key_exists($hook, $this->watch)) {
             if (is_array($this->watch[$hook])) {

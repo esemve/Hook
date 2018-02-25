@@ -11,11 +11,11 @@ It is similar to an event. A code bounded by a hook runs unless a hook listener 
 **What is it good for?**
 
 Example 1: You have a module which displays an editor. This remains the same editor in every case.
-If you bound the display of the editor in a hook, then you can write a module which can redefine/override this hook, and for example changs the textarea to a ckeditor. 
+If you bound the display of the editor in a hook, then you can write a module which can redefine/override this hook, and for example changs the textarea to a ckeditor.
 
-Example 2: You list the users. You can include every line's print in a hook. This way you can write a separate module which could extend this line with an e-mail address print. 
+Example 2: You list the users. You can include every line's print in a hook. This way you can write a separate module which could extend this line with an e-mail address print.
 
-Example 3: You save the users' data in a database. If you do it in a hook, you can write a module which could add extra fields to the user model like "first name" or "last name". To do that, you didn't need to modify the code that handles the users, the extension module doesn't need to know the functioning of the main module. 
+Example 3: You save the users' data in a database. If you do it in a hook, you can write a module which could add extra fields to the user model like "first name" or "last name". To do that, you didn't need to modify the code that handles the users, the extension module doesn't need to know the functioning of the main module.
 
 
 ... and so many other things. If you are building a CMS-like system, it will make your life a lot easier.
@@ -29,7 +29,7 @@ composer require esemve/hook
 then to the app.php :
 ```php
 ...
-'providers' => [ 
+'providers' => [
     ...
     Esemve\Hook\HookServiceProvider::class,
     ...
@@ -47,24 +47,23 @@ then to the app.php :
 Example:
 
 ```php
-    $user = new User();
-    $user = Hook::get('fillUser',[$user],function($user)
-    {
-     return $user;
-    });
+$user = new User();
+$user = Hook::get('fillUser',[$user],function($user){
+    return $user;
+});
 ```
 
 In this case a fillUser hook is thrown, which receive the $user object as a parameter. If nothing catches it, the internal function, the return $user will run, so nothing happens. But it can be caught by a listener from a provider:
 
 ```php
-        Hook::listen('fillUser', function ($callback, $output, $user) {
-            if (empty($output))
-            {
-              $output = $user;
-            }
-            $output->profilImage = ProfilImage::getForUser($user->id);
-            return $output;
-        }, 10);
+Hook::listen('fillUser', function ($callback, $output, $user) {
+    if (empty($output))
+    {
+      $output = $user;
+    }
+    $output->profilImage = ProfilImage::getForUser($user->id);
+    return $output;
+}, 10);
 
 ```
 The $callback contains the hook's original internal function, so it can be called here.
@@ -78,6 +77,30 @@ The hook listener above caught the call of the fillUser, extended the received o
 Number 10 in the example is the priority. They are executed in an order, so if a number 5 is registered to the fillUser as well, it will run before number 10.
 
 
+# Initial output
+
+You can pass initial output to the listeners too.
+
+```php
+$initialOutput='test string';
+
+\Hook::get('testing',['other string'],function($otherString){
+    return $otherString;
+},$initialOutput)
+
+// and later ...
+
+Hook::listen('testing', function ($callback, $output, $otherString) {
+    if ($output==='test string') {
+        $output="{$output} yeeeaaaayyy!";
+    }
+    if ($otherString==='other_string') {
+        // other string is good too
+    }
+    return $output; // 'test string yeeeaaaayyy!'
+});
+```
+If there is no listeners, 'other string' will be returned.
 
 # Usage in blade templates
 
@@ -93,14 +116,30 @@ In this case the hook listener can catch it like this:
 ```
 In the $variables variable it receives all of the variables that are available for the blade template.
 
-**To listen blade templates you need to listen template.hookName instead of just hookName!**
+:exclamation: **To listen blade templates you need to listen `template.hookName` instead of just `hookName`!**
+
+# Wrap HTML
+```php
+@hook('hookName', true)
+    this content can be modified with dom parsers
+    you can inject some html here
+@endhook
+```
+Now the `$output` parameter contains html wrapped by hook component.
+```php
+Hook::listen('template.hookName', function ($callback, $output, $variables) {
+  return "<div class=\"alert alert-success\">$output</div>";
+});
+```
 
 
 # Stop
 ```php
 Hook::stop();
 ```
-Put in a hook listener it stops the running of the other listeners that are registered to this hook. 
+Put in a hook listener it stops the running of the other listeners that are registered to this hook.
+
+
 
 # For testing
 
