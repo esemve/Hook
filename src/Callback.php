@@ -23,10 +23,9 @@ class Callback
     {
         if ($this->run) {
             $this->run = false;
+
             return call_user_func_array($this->function, ($parameters ? $parameters : $this->parameters));
         }
-
-        return null;
     }
 
     public function reset()

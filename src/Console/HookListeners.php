@@ -2,9 +2,8 @@
 
 namespace Esemve\Hook\Console;
 
-use Illuminate\Console\Command;
-use Cache;
 use Hook;
+use Illuminate\Console\Command;
 
 class HookListeners extends Command
 {
@@ -29,17 +28,15 @@ class HookListeners extends Command
      */
     public function handle()
     {
-
         $list = Hook::getListeners();
         $array = [];
 
         foreach ($list as $hook => $lister) {
             foreach ($lister as $key => $element) {
-
                 $array[] = [
                     $key,
                     $hook,
-                    $element['caller']['class']
+                    $element['caller']['class'],
                 ];
             }
         }
@@ -47,6 +44,5 @@ class HookListeners extends Command
         $headers = ['Sort', 'Hook name', 'Listener class'];
 
         $this->table($headers, $array);
-
     }
 }

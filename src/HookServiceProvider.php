@@ -2,8 +2,8 @@
 
 namespace Esemve\Hook;
 
-use Illuminate\Support\ServiceProvider;
 use Blade;
+use Illuminate\Support\ServiceProvider;
 
 class HookServiceProvider extends ServiceProvider
 {
@@ -19,14 +19,13 @@ class HookServiceProvider extends ServiceProvider
         ]);
 
         $this->app->singleton('Hook', function () {
-            return new Hook;
+            return new Hook();
         });
     }
 
     protected function bootDirectives()
     {
         Blade::directive('hook', function ($parameter) {
-
             $parameter = trim($parameter, '()');
             $parameters = explode(',', $parameter);
 
@@ -34,7 +33,7 @@ class HookServiceProvider extends ServiceProvider
 
             // $parameters[1] => bool => is this wrapper component?
             if (!isset($parameters[1])) {
-                return ' <' . '?php
+                return ' <'.'?php
 
                 $__definedVars = (get_defined_vars()["__data"]);
                 if (empty($__definedVars))
@@ -44,17 +43,16 @@ class HookServiceProvider extends ServiceProvider
                 $output = \Hook::get("template.'.$name.'",["data"=>$__definedVars],function($data) { return null; });
                 if ($output)
                 echo $output;
-                ?' . '>';
-            }else{
-                return ' <' . '?php
+                ?'.'>';
+            } else {
+                return ' <'.'?php
                     $__hook_name="'.$name.'";
                     ob_start();
-                ?' . '>';
+                ?'.'>';
             }
         });
 
-        Blade::directive('endhook',function($parameter){
-
+        Blade::directive('endhook', function ($parameter) {
             return ' <'.'?php
                 $__definedVars = (get_defined_vars()["__data"]);
                 if (empty($__definedVars))
