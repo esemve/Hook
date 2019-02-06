@@ -2,6 +2,8 @@
 
 namespace Esemve\Hook;
 
+use Illuminate\Support\Arr;
+
 class Hook
 {
     protected $watch = [];
@@ -77,7 +79,7 @@ class Hook
             'caller'   => [
                 //'file' => $caller['file'],
                 //'line' => $caller['line'],
-                'class' => array_get($caller, 'class'),
+                'class' => Arr::get($caller, 'class'),
             ],
         ];
 
