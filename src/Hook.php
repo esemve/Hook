@@ -62,7 +62,7 @@ class Hook
     {
         $caller = debug_backtrace(null, 3)[2];
 
-        if (in_array(array_get($caller, 'function'), ['include', 'require'])) {
+        if (in_array(Arr::get($caller, 'function'), ['include', 'require'])) {
             $caller = debug_backtrace(null, 4)[3];
         }
 
