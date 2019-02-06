@@ -58,7 +58,11 @@ class Hook
      */
     public function listen($hook, $function, $priority = null)
     {
-        $caller = debug_backtrace()[2];
+        $caller = debug_backtrace(null, 3)[2];
+
+        if (in_array(array_get($caller, 'function'), ['include', 'require'])) {
+            $caller = debug_backtrace(null, 4)[3];
+        }
 
         if (empty($this->watch[$hook])) {
             $this->watch[$hook] = [];
@@ -73,7 +77,7 @@ class Hook
             'caller'   => [
                 //'file' => $caller['file'],
                 //'line' => $caller['line'],
-                'class' => $caller['class'],
+                'class' => array_get($caller, 'class'),
             ],
         ];
 
