@@ -2,6 +2,8 @@
 
 namespace Esemve\Hook;
 
+use Illuminate\Support\Arr;
+
 class Hook
 {
     protected $watch = [];
@@ -58,7 +60,11 @@ class Hook
      */
     public function listen($hook, $function, $priority = null)
     {
-        $caller = debug_backtrace()[2];
+        $caller = debug_backtrace(null, 3)[2];
+
+        if (in_array(Arr::get($caller, 'function'), ['include', 'require'])) {
+            $caller = debug_backtrace(null, 4)[3];
+        }
 
         if (empty($this->watch[$hook])) {
             $this->watch[$hook] = [];
@@ -73,7 +79,7 @@ class Hook
             'caller'   => [
                 //'file' => $caller['file'],
                 //'line' => $caller['line'],
-                'class' => $caller['class'],
+                'class' => Arr::get($caller, 'class'),
             ],
         ];
 
