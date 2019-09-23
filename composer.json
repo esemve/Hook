@@ -1,6 +1,6 @@
 {
     "name": "esemve/hook",
-    "description": "Simple hook engine for Laravel 5.*",
+    "description": "Simple hook engine for Laravel 5.*, 6.*",
     "type": "library",
     "keywords": ["Hook","Laravel"],
     "license": "MIT",
@@ -14,7 +14,7 @@
     "minimum-stability": "dev",
 	"require": {
 		"php": ">=5.6",
-		"laravel/framework": "5.*"
+		"laravel/framework": "5.* || 6.*"
     },
     "autoload": {
 		"psr-4": {
