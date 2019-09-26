@@ -145,11 +145,11 @@ Hook::listen('template.*', function($callback, $output, $variables, $wildcards =
 :exclamation: Warning : the wildcard hook will be executed **only if there is no exact match** for the given hook name.
 <br>For example :
 ```php
-Hook::listen('foo', function () {
-  return 'foo';
-});
 Hook::listen('*', function () {
   return 'wildcard';
+});
+Hook::listen('foo', function () {
+  return 'foo';
 });
 
 Hook::get('foobar'); // => Will return 'wildcard'
