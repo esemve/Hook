@@ -177,19 +177,41 @@ class Hook
         array_unshift($params, $callback);
 
         if (array_key_exists($hook, $this->watch)) {
-            if (is_array($this->watch[$hook])) {
-                foreach ($this->watch[$hook] as $function) {
-                    if (!empty($this->stop[$hook])) {
-                        unset($this->stop[$hook]);
-                        break;
-                    }
-
-                    $output = call_user_func_array($function['function'], $params);
-                    $params[1] = $output;
+            $output = $this->getOutputForHook($hook, $params, $output);
+        }
+        else {
+            foreach(array_keys($this->watch) as $key) {
+                if(\Illuminate\Support\Str::is($key, $hook)) {
+                    $output = $this->getOutputForHook($key, $params, $output);
+                    break;
                 }
             }
         }
 
+        return $output;
+    }
+
+    /**
+     * Calculate and return the output for the given hook name
+     *
+     * @param string                $hook   Hook name
+     * @param array                 $params Parameters
+     * @param string|null           $output html wrapped by hook
+     * @return mixed
+     */
+    protected function getOutputForHook($hook, $params, $output)
+    {
+        if (is_array($this->watch[$hook])) {
+            foreach ($this->watch[$hook] as $function) {
+                if (!empty($this->stop[$hook])) {
+                    unset($this->stop[$hook]);
+                    break;
+                }
+
+                $output = call_user_func_array($function['function'], $params);
+                $params[1] = $output;
+            }
+        }
         return $output;
     }
 
