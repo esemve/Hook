@@ -3,6 +3,7 @@
 namespace Esemve\Hook;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class Hook
 {
@@ -206,7 +207,7 @@ class Hook
             $output = $this->getOutputForHook($hook, $params, $output);
         } else {
             foreach(array_keys($this->watch) as $key) {
-                if(\Illuminate\Support\Str::is($key, $hook)) {
+                if(Str::is($key, $hook)) {
                     array_push($params, $this->getWildcards($key, $hook));
                     $output = $this->getOutputForHook($key, $params, $output);
                     break;
