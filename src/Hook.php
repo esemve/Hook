@@ -92,6 +92,7 @@ class Hook
      *
      * @param string $hook    Hook name
      * @param string $pattern Pattern to match against hook name
+     *
      * @return array
      */
     protected function getWildcards($hook, $pattern)
@@ -224,6 +225,7 @@ class Hook
      * @param string      $hook   Hook name
      * @param array       $params Parameters
      * @param string|null $output html wrapped by hook
+     *
      * @return mixed
      */
     protected function getOutputForHook($hook, $params, $output)
