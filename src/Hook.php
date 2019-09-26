@@ -241,6 +241,7 @@ class Hook
                 $params[1] = $output;
             }
         }
+
         return $output;
     }
 
