@@ -87,6 +87,31 @@ class Hook
     }
 
     /**
+     * Extract and return the words corresponding to wildcard(s) in the hook name pattern
+     *
+     * @param string                $hook       Hook name
+     * @param string                $pattern    Pattern to match against hook name
+     * @return array
+     */
+    protected function getWildcards($hook, $pattern)
+    {
+        $matches = [];
+
+        // Prepare $hook as a regex pattern
+        $hook = '/^' . $hook . '$/';
+        $hook = str_replace('.', '\.', $hook);
+        $hook = str_replace('*', '(.*)', $hook);
+
+        // Try to match wildcards
+        preg_match($hook, $pattern, $matches);
+
+        // Remove first element, containing the full pattern match
+        array_shift($matches);
+
+        return $matches;
+    }
+
+    /**
      * Return all registered hooks.
      *
      * @return array
@@ -177,11 +202,12 @@ class Hook
         array_unshift($params, $callback);
 
         if (array_key_exists($hook, $this->watch)) {
+            array_push($params, []);
             $output = $this->getOutputForHook($hook, $params, $output);
-        }
-        else {
+        } else {
             foreach(array_keys($this->watch) as $key) {
                 if(\Illuminate\Support\Str::is($key, $hook)) {
+                    array_push($params, $this->getWildcards($key, $hook));
                     $output = $this->getOutputForHook($key, $params, $output);
                     break;
                 }
