@@ -201,9 +201,9 @@ class Hook
      */
     public function getListeners($hookName = null)
     {
-	if (is_null($hookName)) {
-	    return $this->watch;
-	}
-	return empty($this->watch[$hookName]) ? null : $this->watch[$hookName];
+        if (is_null($hookName)) {
+            return $this->watch;
+        }
+        return empty($this->watch[$hookName]) ? null : $this->watch[$hookName];
     }
 }
