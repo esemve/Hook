@@ -196,10 +196,14 @@ class Hook
     /**
      * Return the listeners.
      *
+     * @param string $hookName If supplied, only listeners for the specified hook will be returned.
      * @return array
      */
-    public function getListeners()
+    public function getListeners($hookName = null)
     {
-        return $this->watch;
+	if (is_null($hookName)) {
+	    return $this->watch;
+	}
+	return empty($this->watch[$hookName]) ? null : $this->watch[$hookName];
     }
 }
