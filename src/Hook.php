@@ -205,6 +205,7 @@ class Hook
         if (is_null($hookName)) {
             return $this->watch;
         }
+        
         return empty($this->watch[$hookName]) ? null : $this->watch[$hookName];
     }
 }
