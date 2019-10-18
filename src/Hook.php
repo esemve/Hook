@@ -197,6 +197,7 @@ class Hook
      * Return the listeners.
      *
      * @param string $hookName If supplied, only listeners for the specified hook will be returned.
+     *
      * @return array
      */
     public function getListeners($hookName = null)
