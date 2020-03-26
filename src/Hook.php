@@ -3,6 +3,7 @@
 namespace Esemve\Hook;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class Hook
 {
@@ -84,6 +85,32 @@ class Hook
         ];
 
         ksort($this->watch[$hook]);
+    }
+
+    /**
+     * Extract and return the words corresponding to wildcard(s) in the hook name pattern.
+     *
+     * @param string $hook    Hook name
+     * @param string $pattern Pattern to match against hook name
+     *
+     * @return array
+     */
+    protected function getWildcards($hook, $pattern)
+    {
+        $matches = [];
+
+        // Prepare $hook as a regex pattern
+        $hook = '/^'.$hook.'$/';
+        $hook = str_replace('.', '\.', $hook);
+        $hook = str_replace('*', '(.*)', $hook);
+
+        // Try to match wildcards
+        preg_match($hook, $pattern, $matches);
+
+        // Remove first element, containing the full pattern match
+        array_shift($matches);
+
+        return $matches;
     }
 
     /**
@@ -177,16 +204,41 @@ class Hook
         array_unshift($params, $callback);
 
         if (array_key_exists($hook, $this->watch)) {
-            if (is_array($this->watch[$hook])) {
-                foreach ($this->watch[$hook] as $function) {
-                    if (!empty($this->stop[$hook])) {
-                        unset($this->stop[$hook]);
-                        break;
-                    }
-
-                    $output = call_user_func_array($function['function'], $params);
-                    $params[1] = $output;
+            array_push($params, []);
+            $output = $this->getOutputForHook($hook, $params, $output);
+        } else {
+            foreach (array_keys($this->watch) as $key) {
+                if (Str::is($key, $hook)) {
+                    array_push($params, $this->getWildcards($key, $hook));
+                    $output = $this->getOutputForHook($key, $params, $output);
+                    break;
                 }
+            }
+        }
+
+        return $output;
+    }
+
+    /**
+     * Calculate and return the output for the given hook name.
+     *
+     * @param string      $hook   Hook name
+     * @param array       $params Parameters
+     * @param string|null $output html wrapped by hook
+     *
+     * @return mixed
+     */
+    protected function getOutputForHook($hook, $params, $output)
+    {
+        if (is_array($this->watch[$hook])) {
+            foreach ($this->watch[$hook] as $function) {
+                if (!empty($this->stop[$hook])) {
+                    unset($this->stop[$hook]);
+                    break;
+                }
+
+                $output = call_user_func_array($function['function'], $params);
+                $params[1] = $output;
             }
         }
 

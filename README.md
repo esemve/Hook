@@ -132,6 +132,30 @@ Hook::listen('template.hookName', function ($callback, $output, $variables) {
 });
 ```
 
+# Wildcards
+
+You can use wildcards to attach the same listener to multiple hooks.
+With wildcards, you can get another parameter `$wildcards` containing an array :
+```php
+Hook::listen('template.*', function($callback, $output, $variables, $wildcards = []) {
+  // For the hook "template.foobar", $wildcards will contain : ["foobar"]
+}):
+```
+
+:exclamation: Warning : the wildcard hook will be executed **only if there is no exact match** for the given hook name.
+<br>For example :
+```php
+Hook::listen('*', function () {
+  return 'wildcard';
+});
+Hook::listen('foo', function () {
+  return 'foo';
+});
+
+Hook::get('foobar'); // => Will return 'wildcard'
+Hook::get('bar'); // => Will return 'wildcard'
+Hook::get('foo'); // => Will return 'foo'
+``` 
 
 # Stop
 ```php
